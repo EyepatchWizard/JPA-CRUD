@@ -1,9 +1,0 @@
-package com.sazzad.JPA.CRUD.repositories;
-
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-
-@SpringBootTest
-public class BookDaoImplIntegrationTests {
-
-}
