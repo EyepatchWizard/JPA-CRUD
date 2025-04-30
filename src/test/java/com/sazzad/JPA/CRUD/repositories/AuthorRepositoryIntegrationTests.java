@@ -2,6 +2,7 @@ package com.sazzad.JPA.CRUD.repositories;
 
 import com.sazzad.JPA.CRUD.TestDataUtil;
 import com.sazzad.JPA.CRUD.domain.Author;
+import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,7 @@ public class AuthorRepositoryIntegrationTests {
     }
 
     @Test
-    public void TestThatManyAuthorCanBeCreatedAndRecalled(){
+    public void testThatManyAuthorCanBeCreatedAndRecalled(){
 
         Author authorA = TestDataUtil.createTestAuthorA();
         undertest.save(authorA);
@@ -51,5 +52,19 @@ public class AuthorRepositoryIntegrationTests {
         assertThat(result)
                 .hasSize(3)
                 .containsExactly(authorA, authorB, authorC);
+    }
+
+    @Test
+    public void testThatAuthorCanBeUpdated(){
+
+        Author author = TestDataUtil.createTestAuthorA();
+        undertest.save(author);
+
+        author.setName("updated");
+        undertest.save(author);
+
+        Optional<Author> result = undertest.findById(author.getId());
+        assertThat(result).isPresent();
+        assertThat(result.get()).isEqualTo(author);
     }
 }
