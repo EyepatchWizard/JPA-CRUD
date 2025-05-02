@@ -5,6 +5,7 @@ import com.sazzad.JPA.CRUD.domain.Author;
 import com.sazzad.JPA.CRUD.domain.Book;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -18,9 +19,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class BookRepositoryIntegrationTests {
 
-    private BookRepository underTest;
+    private final BookRepository underTest;
 
-    public BookRepositoryIntegrationTests(BookRepository underTest) {
+    @Autowired
+    public BookRepositoryIntegrationTests(final BookRepository underTest) {
         this.underTest = underTest;
     }
 
@@ -70,4 +72,19 @@ public class BookRepositoryIntegrationTests {
         assertThat(result).isPresent();
         assertThat(result.get()).isEqualTo(book);
     }
+
+    @Test
+    public void testThatBookCanBeDeleted(){
+
+        Author author = TestDataUtil.createTestAuthorA();
+
+        Book book = TestDataUtil.createTestBookA(author);
+        underTest.save(book);
+        underTest.deleteById(book.getIsbn());
+
+        Optional<Book> result = underTest.findById(book.getIsbn());
+        assertThat(result).isEmpty();
+
+    }
+
 }

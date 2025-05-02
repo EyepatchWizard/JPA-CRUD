@@ -2,7 +2,6 @@ package com.sazzad.JPA.CRUD.repositories;
 
 import com.sazzad.JPA.CRUD.TestDataUtil;
 import com.sazzad.JPA.CRUD.domain.Author;
-import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +18,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class AuthorRepositoryIntegrationTests {
 
-    private AuthorRepository undertest;
+    private final AuthorRepository undertest;
 
     @Autowired
-
-    public AuthorRepositoryIntegrationTests(AuthorRepository undertest) {
+    public AuthorRepositoryIntegrationTests(final AuthorRepository undertest) {
         this.undertest = undertest;
     }
 
@@ -66,5 +64,50 @@ public class AuthorRepositoryIntegrationTests {
         Optional<Author> result = undertest.findById(author.getId());
         assertThat(result).isPresent();
         assertThat(result.get()).isEqualTo(author);
+    }
+
+    @Test
+    public void testThatAuthorCanBeDeleted(){
+
+        Author author = TestDataUtil.createTestAuthorA();
+        undertest.save(author);
+        undertest.deleteById(author.getId());
+
+        Optional<Author> result = undertest.findById(author.getId());
+        assertThat(result).isEmpty();
+
+    }
+
+    @Test
+    public void testThatGetAuthorsWithAgeLessThan() {
+
+        Author authorA = TestDataUtil.createTestAuthorA();
+        undertest.save(authorA);
+
+        Author authorB = TestDataUtil.createTestAuthorB();
+        undertest.save(authorB);
+
+        Author authorC = TestDataUtil.createTestAuthorC();
+        undertest.save(authorC);
+
+        Iterable<Author> result = undertest.ageLessThan(50);
+        assertThat(result).containsExactly(authorB, authorC);
+    }
+
+    @Test
+    public void testThatGetAuthorsWithAgeGreaterThan() {
+
+        Author authorA = TestDataUtil.createTestAuthorA();
+        undertest.save(authorA);
+
+        Author authorB = TestDataUtil.createTestAuthorB();
+        undertest.save(authorB);
+
+        Author authorC = TestDataUtil.createTestAuthorC();
+        undertest.save(authorC);
+
+        Iterable<Author> result = undertest.findAuthorWithAgeGreaterThan(40);
+        assertThat(result).containsExactly(authorA, authorB);
+
     }
 }
